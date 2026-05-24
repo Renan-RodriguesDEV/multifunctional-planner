@@ -56,7 +56,7 @@ public class EventScheduleService {
         // check if event schedule with same scheduledAt already exists
         if (this.existsByScheduledAt(event.scheduledAt())) {
             logger.error("An event is already scheduled for this time");
-            throw new AlredyExistsException("Já existe um evento agendado para esse horário");
+            throw new AlredyExistsException("Já existe um evento agendado para esse horário " + event.scheduledAt());
         }
         var newEvent = event.toEntity();
         var person = personRepository.findById(event.person_id()).orElse(null);
@@ -72,7 +72,7 @@ public class EventScheduleService {
             throw new RuntimeException("A data e hora do evento não pode ser no passado");
         }
         if (this.existsByScheduledAt(event.scheduledAt())) {
-            throw new AlredyExistsException("Já existe um evento agendado para esse horário");
+            throw new AlredyExistsException("Já existe um evento agendado para esse horário " + event.scheduledAt());
         }
         if (!eventScheduleRepository.existsById(id)) {
             logger.error("Product not found");
@@ -99,7 +99,13 @@ public class EventScheduleService {
     }
 
     public boolean existsByScheduledAt(LocalDateTime datetime) {
-        return eventScheduleRepository.findByScheduledAtIn(datetime) != null ? true :
-        false;
+        List<EventSchedule> events = eventScheduleRepository.findByScheduledAtIn(datetime).orElse(null);
+        logger.info("Checking for existing events around {}", datetime);
+        if (events != null) {
+            logger.info("Found {} events around {}", events.size(), datetime);
+        } else {
+            logger.info("No events found around {}", datetime);
+        }
+        return !events.isEmpty();
     }
 }

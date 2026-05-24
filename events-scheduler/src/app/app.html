@@ -1,0 +1,24 @@
+<nav class="bg-white border-b border-gray-200 px-4 py-3">
+  <div class="max-w-7xl mx-auto flex gap-4">
+    <a routerLink="/events" class="text-blue-600 font-semibold hover:text-blue-700">Eventos</a>
+    <a routerLink="/locations" class="text-blue-600 font-semibold hover:text-blue-700"
+      >Localizações</a
+    >
+    <a routerLink="/persons" class="text-blue-600 font-semibold hover:text-blue-700">Pessoas</a>
+  </div>
+</nav>
+
+<!-- Toasts -->
+<div class="fixed top-4 right-4 z-50 space-y-2">
+  <div
+    *ngFor="let toast of toastService.toasts()"
+    class="px-4 py-3 rounded shadow-lg text-white animate-pulse"
+    [ngClass]="toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'"
+  >
+    {{ toast.message }}
+  </div>
+</div>
+
+<main class="max-w-7xl mx-auto p-6">
+  <router-outlet></router-outlet>
+</main>

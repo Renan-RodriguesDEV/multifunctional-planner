@@ -3,17 +3,17 @@ services:
   web:
     build: ./projedata/Dockerfile
     ports:
-      - 80:80
+      - 80:8080
     depends_on:
       - db
   db:
     image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: admin
-      MYSQL_DATABASE: db_schedule
+      MYSQL_DATABASE: db_events
       MYSQL_USER: root
-      MYSQL_PASSWORD: admin
+      MYSQL_PASSWORD: "#20022005Re"
     ports:
-      - 3306:3306
+      - 3366:3306
     
   

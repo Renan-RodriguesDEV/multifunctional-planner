@@ -1,0 +1,83 @@
+<section class="bg-white rounded-lg shadow p-6">
+  <header class="flex justify-between items-center mb-6 pb-4 border-b">
+    <h2 class="text-2xl font-bold">Localizações</h2>
+    <div class="flex gap-2">
+      <button
+        (click)="form = {}"
+        class="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+      >
+        Novo
+      </button>
+      <button
+        (click)="load()"
+        class="px-3 py-2 border border-blue-600 text-blue-600 rounded hover:bg-gray-50"
+      >
+        Atualizar
+      </button>
+    </div>
+  </header>
+  <div class="flex gap-6">
+    <!-- Lista -->
+    <div class="flex-1">
+      <div *ngIf="items.length === 0" class="text-center py-8 text-gray-500">
+        Nenhuma localização cadastrada
+      </div>
+      <ul class="space-y-3">
+        <li
+          *ngFor="let p of items"
+          class="bg-gray-50 p-4 rounded border border-gray-200 hover:border-blue-300 transition"
+        >
+          <div class="flex justify-between items-center">
+            <div class="font-semibold text-lg">{{ p.address }}</div>
+            <div class="flex gap-2">
+              <button
+                (click)="edit(p)"
+                class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Editar
+              </button>
+              <button
+                (click)="remove(p.id)"
+                class="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Deletar
+              </button>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <!-- Formulário -->
+    <aside
+      class="w-96 bg-gradient-to-b from-white to-gray-50 p-5 rounded border border-gray-200 shadow-sm"
+    >
+      <h3 class="font-bold text-lg mb-4">{{ form.id ? '✏️ Editando' : '➕ Nova' }} localização</h3>
+      <form (ngSubmit)="save()" class="space-y-4">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Endereço *</label>
+          <input
+            name="address"
+            [(ngModel)]="form.address"
+            placeholder="Ex: Rua A, 123"
+            class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button
+            type="submit"
+            class="flex-1 px-3 py-2 bg-blue-600 text-white text-sm font-semibold rounded hover:bg-blue-700"
+          >
+            Salvar
+          </button>
+          <button
+            type="button"
+            (click)="form = {}"
+            class="flex-1 px-3 py-2 border border-gray-300 text-gray-700 text-sm font-semibold rounded hover:bg-gray-100"
+          >
+            Limpar
+          </button>
+        </div>
+      </form>
+    </aside>
+  </div>
+</section>
