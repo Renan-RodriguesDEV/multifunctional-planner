@@ -8,13 +8,14 @@ import com.desafio_fullstack.projedata.domain.entities.Person;
 public record PersonResponse(Long id, String name, List<EventScheduleResponse> eventSchedules,
         LocalDateTime createdAt) {
     public Person toEntity() {
-        ;
-        return new Person(id, name, eventSchedules.stream().map(e -> e.toEntity()).toList(), createdAt);
+        List<EventScheduleResponse> schedules = eventSchedules == null ? List.of() : eventSchedules;
+        return new Person(id, name, schedules.stream().map(e -> e.toEntity()).toList(), createdAt);
     }
 
     public static PersonResponse fromEntity(Person person) {
+        List<EventScheduleResponse> schedules = person.getEventSchedules() == null ? List.of()
+                : person.getEventSchedules().stream().map(e -> EventScheduleResponse.fromEntity(e)).toList();
         return new PersonResponse(person.getId(), person.getName(),
-                person.getEventSchedules().stream().map(e -> EventScheduleResponse.fromEntity(e)).toList(),
-                person.getCreatedAt());
+                schedules, person.getCreatedAt());
     }
 }

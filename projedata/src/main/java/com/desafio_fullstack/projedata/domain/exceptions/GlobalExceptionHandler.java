@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -28,6 +29,16 @@ public class GlobalExceptionHandler {
         // obs: eu nn lembrava o codigo de status, logo usei o HttpStatus
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse(e.getMessage(), "Resource already exists", LocalDateTime.now()));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        logger.error("Invalid request parameters: {}", e.getMessage());
+        // obs: eu nn lembrava o codigo de status, logo usei o HttpStatus
+        StringBuilder errorMessage = new StringBuilder("Invalid request parameters: ");
+        e.getFieldErrors().stream().forEach(fe -> errorMessage.append(fe.getDefaultMessage()).append("\n"));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(errorMessage.toString(), "An unexpected error occurred", LocalDateTime.now()));
     }
 
     @ExceptionHandler(Exception.class)

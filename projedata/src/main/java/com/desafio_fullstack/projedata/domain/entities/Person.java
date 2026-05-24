@@ -1,6 +1,7 @@
 package com.desafio_fullstack.projedata.domain.entities;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -29,11 +30,12 @@ public class Person {
     @Column(nullable = false, unique = true, length = 255)
     private String name;
     @OneToMany(mappedBy = "person")
-    private List<EventSchedule> eventSchedules;
+    private List<EventSchedule> eventSchedules = new ArrayList<>();
     private LocalDateTime createdAt;
 
     public Person(String name) {
         this.name = name;
+        this.eventSchedules = new ArrayList<>();
     }
 
     @PrePersist

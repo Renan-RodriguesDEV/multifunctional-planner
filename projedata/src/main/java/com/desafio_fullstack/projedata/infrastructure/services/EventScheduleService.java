@@ -13,6 +13,8 @@ import com.desafio_fullstack.projedata.domain.entities.EventSchedule;
 import com.desafio_fullstack.projedata.domain.exceptions.NotFoundException;
 import com.desafio_fullstack.projedata.domain.exceptions.AlredyExistsException;
 import com.desafio_fullstack.projedata.domain.repositories.EventScheduleRepository;
+import com.desafio_fullstack.projedata.domain.repositories.LocationRepository;
+import com.desafio_fullstack.projedata.domain.repositories.PersonRepository;
 import com.desafio_fullstack.projedata.infrastructure.dto.requests.EventScheduleRequest;
 import com.desafio_fullstack.projedata.infrastructure.dto.response.EventScheduleResponse;
 
@@ -21,10 +23,16 @@ import jakarta.transaction.Transactional;
 @Service
 public class EventScheduleService {
     private final EventScheduleRepository eventScheduleRepository;
+    private final PersonRepository personRepository;
+    private final LocationRepository locationRepository;
+
     Logger logger = LoggerFactory.getLogger(EventScheduleController.class);
 
-    public EventScheduleService(EventScheduleRepository eventScheduleRepository) {
+    public EventScheduleService(EventScheduleRepository eventScheduleRepository, PersonRepository personRepository,
+            LocationRepository locationRepository) {
         this.eventScheduleRepository = eventScheduleRepository;
+        this.personRepository = personRepository;
+        this.locationRepository = locationRepository;
     }
 
     public EventSchedule findById(Long id) {
@@ -50,7 +58,12 @@ public class EventScheduleService {
             logger.error("An event is already scheduled for this time");
             throw new AlredyExistsException("Já existe um evento agendado para esse horário");
         }
-        return EventScheduleResponse.fromEntity(eventScheduleRepository.save(event.toEntity()));
+        var newEvent = event.toEntity();
+        var person = personRepository.findById(event.person_id()).orElse(null);
+        var location = locationRepository.findById(event.location_id()).orElse(null);
+        newEvent.setPerson(person);
+        newEvent.setLocation(location);
+        return EventScheduleResponse.fromEntity(eventScheduleRepository.save(newEvent));
     }
 
     public EventScheduleResponse update(Long id, EventScheduleRequest event) {
@@ -68,9 +81,11 @@ public class EventScheduleService {
         EventSchedule existedEvent = this.findById(id);
         existedEvent.setName(event.name());
         existedEvent.setDescription(event.description());
-        existedEvent.setPrice(event.price());
-        existedEvent.setStock(event.stock());
-        existedEvent.setPerson(event.person().toEntity());
+        existedEvent.setCount(event.count());
+        var person = personRepository.findById(event.person_id()).orElse(null);
+        var location = locationRepository.findById(event.location_id()).orElse(null);
+        existedEvent.setPerson(person);
+        existedEvent.setLocation(location);
 
         return EventScheduleResponse.fromEntity(eventScheduleRepository.save(existedEvent));
     }
@@ -84,6 +99,7 @@ public class EventScheduleService {
     }
 
     public boolean existsByScheduledAt(LocalDateTime datetime) {
-        return eventScheduleRepository.findByScheduledAtIn(datetime) != null ? true : false;
+        return eventScheduleRepository.findByScheduledAtIn(datetime) != null ? true :
+        false;
     }
 }

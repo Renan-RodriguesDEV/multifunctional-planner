@@ -1,16 +1,16 @@
 package com.desafio_fullstack.projedata.infrastructure.dto.response;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.desafio_fullstack.projedata.domain.entities.EventSchedule;
 
-public record EventScheduleResponse(Long id, String name, String description, BigDecimal price, Long stock,
-        PersonResponse person, LocalDateTime scheduledAt, LocalDateTime createdAt, LocalDateTime updatedAt) {
+public record EventScheduleResponse(Long id, String name, String description, Long count,
+        Long person_id, LocationResponse location, LocalDateTime scheduledAt, LocalDateTime createdAt,
+        LocalDateTime updatedAt) {
 
     public EventSchedule toEntity() {
-        return new EventSchedule(id, name, description, price, stock, person.toEntity(), true, scheduledAt, createdAt,
-                updatedAt);
+        return new EventSchedule(name, description, count,
+                scheduledAt);
     }
 
     public static EventScheduleResponse fromEntity(EventSchedule event) {
@@ -18,9 +18,9 @@ public record EventScheduleResponse(Long id, String name, String description, Bi
                 event.getId(),
                 event.getName(),
                 event.getDescription(),
-                event.getPrice(),
-                event.getStock(),
-                PersonResponse.fromEntity(event.getPerson()),
+                event.getCount(),
+                event.getPerson() != null ? event.getPerson().getId() : null,
+                LocationResponse.fromEntity(event.getLocation()),
                 event.getScheduledAt(),
                 event.getCreatedAt(),
                 event.getUpdatedAt());

@@ -38,7 +38,7 @@ public class PersonService {
     }
 
     public PersonResponse save(PersonRequest person) {
-        if (!repository.existsByName(person.name())) {
+        if (repository.existsByName(person.name())) {
             throw new RuntimeException("Person with name " + person.name() + " already exists");
         }
         return PersonResponse.fromEntity(repository.save(person.toEntity()));
